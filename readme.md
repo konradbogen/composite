@@ -165,12 +165,12 @@ This ensures that **structural composition is preserved during rendering**, a ke
 
 Obsidian Markdown is treated as a **surface syntax** for the formal language.
 
-| Markdown Construct | Semantic Meaning              |     |     |
-| ------------------ | ----------------------------- | --- | --- |
-| `[[file]]`         | Component inclusion           |     |     |
-| `# Heading`        | Vertical composition boundary |     |     |
-| `*` suffix         | Kleene star                   |     |     |
-| `?`                | Layout control                |     |     |
+| Markdown Construct | Semantic Meaning              |
+| ------------------ | ----------------------------- |
+| `[[file]]`         | Component inclusion           |
+| `# Heading`        | Vertical composition boundary |
+| `*` suffix         | Kleene star                   |
+| `?`                | Layout control                |
 
 Thus, Markdown becomes a **DSL (Domain-Specific Language)** whose semantics are defined by the component algebra.
 
