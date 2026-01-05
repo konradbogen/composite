@@ -1,200 +1,67 @@
-# Obsidian → LilyPond Builder
+# Composite
 
-_A compositional music-notation pipeline based on design patterns and formal language theory_
+## 1. Introduction
 
-## Overview
+This project presents a **compositional content-generation pipeline** inspired by software design patterns and formal language theory. The framework is **domain-agnostic**, capable of rendering structured text, documents, or musical notation from modular components.
 
-This project implements a **compositional system for musical notation** that translates **Obsidian Markdown** into **LilyPond** code. The system is built using classic **object-oriented design patterns** and is formally interpretable as a **regular-language constructor** over musical symbols.
+Rather than focusing solely on music, the system treats content as **nested, composable units**, where sections can contain sequences, repetitions, or alternative choices. This makes it suitable for diverse applications, such as:
 
-Rather than treating LilyPond as a flat output format, the project models music as a **structured language**, assembled from smaller expressions using algebraic operators.
+- Music notation (e.g., generating LilyPond scores)
+- Exams or problem sets, where each task can have multiple variants
+- Structured educational content or procedural documents
+- Any scenario where hierarchical content and combinatorial variation are required
 
----
-
-## Architectural Foundations
-
-The implementation follows the **Composite Pattern** (Gamma et al., 1994), enabling recursive construction of complex musical forms from simple components.
-
-Every musical element implements the interface:
-
-```java
-public interface Component {
-    String print();
-}
-```
-
-This ensures **referential transparency**: each component maps deterministically to a LilyPond string.
+By formalizing content in terms of **components and combinators**, the pipeline allows for **systematic generation, reuse, and modification** of complex documents or datasets.
 
 ---
 
-## Core Structural Classes
+## 2. Design Patterns & Architecture
 
-### `Composite` — Concatenation
+The framework is built on classical **Gang of Four design patterns**, specifically:
 
-Represents sequential composition of musical material.
+- **Composite**: Treats both atomic and compound content uniformly, enabling hierarchical nesting.
+- **VerticalComposite**: Aggregates sequences of components to define sections or logical units.
+- **Repeat**: Repeats a component a fixed or variable number of times, analogous to iteration.
 
-Formal analogue:
-
-```
-AB
-```
-
-### `VerticalComposite` — Parallel Composition / Choice
-
-Represents simultaneous musical structures (e.g. multiple staves).
-
-Formal analogue:
-
-```
-A | B
-```
-
-### `Repeat` — Iteration
-
-Represents repeated musical material.
-
-Formal analogue:
-
-```
-A*
-```
+These patterns serve as **modular building blocks**, combining in flexible ways to represent sequences, choices, and nested structures. This approach ensures that content generation is **extensible**, **maintainable**, and **consistent**, following the principles of object-oriented design.
 
 ---
 
-## Theory
+## 3. Formal Language Theory
 
-### 1. Music as a Formal Language
+The pipeline draws a direct analogy between its architecture and **regular expressions** in formal language theory:
 
-In formal language theory, a language **L** is defined over an alphabet **Σ** as a set of strings:
+| Concept in Pipeline       | Formal Language Equivalent |
+| ------------------------- | -------------------------- |
+| Sequence of components    | Concatenation              |
+| Repeat component          | Kleene Star (\*)           |
+| Choice between components | Union / Alternation        |
 
-```
-L ⊆ Σ*
-```
+By leveraging these analogies, the framework allows for **combinatorial content generation**:
 
-In this project:
+- You can define multiple variants for a given section (choice)
+- Repeat sections arbitrarily (Kleene star)
+- Concatenate sequences of sections or tasks to form a complete document
 
-- **Alphabet (Σ)**
-  Primitive LilyPond tokens (notes, rests, chords, commands)
-
-- **Strings**
-  Valid LilyPond source files
-
-- **Language (L)**
-  The set of all LilyPond scores constructible from Obsidian input
-
-Each `Component` corresponds to a **language fragment**, and `print()` computes a concrete string in **Σ\***.
+This formal underpinning provides both **predictability** and **generative power**, allowing users to reason about the combinatorial space of possible outputs.
 
 ---
 
-### 2. Algebra of Musical Expressions
+## 4. Applications & Outlook
 
-The system defines a small **algebra of musical expressions**:
+While initially demonstrated using **LilyPond for music generation**, the framework applies broadly to any structured text or hierarchical content:
 
-| Operator      | Class               | Meaning                       |
-| ------------- | ------------------- | ----------------------------- |
-| Concatenation | `Composite`         | Sequential music              |
-| Alternation   | `VerticalComposite` | Simultaneous / parallel music |
-| Kleene Star   | `Repeat`            | Repetition                    |
+- **Exams and exercises**: Each section can have multiple tasks, each task can have multiple variants, and sections can recursively include other sections.
+- **Automated reports**: Sections, paragraphs, and data tables can be combined with alternative formulations or repeated patterns.
+- **Procedural documentation**: Standard operating procedures or instructional manuals can be generated dynamically from reusable components.
 
-These operators are **closed** over the set of components, allowing arbitrary nesting.
+Future extensions may include:
 
-Formally, if `A` and `B` are components producing languages `LA` and `LB`:
+- A GUI for visually composing hierarchical content trees
+- Support for additional output formats (PDF, Markdown, HTML)
+- Integration with machine learning models for content suggestion or variant generation
 
-- **Concatenation**
-
-  ```
-  L(Composite(A, B)) = { xy | x ∈ LA, y ∈ LB }
-  ```
-
-- **Alternation**
-
-  ```
-  L(VerticalComposite(A, B)) = LA ∪ LB
-  ```
-
-- **Repetition**
-
-  ```
-  L(Repeat(A)) = LA*
-  ```
-
-This establishes the system as a **regular language generator**.
-
----
-
-### 3. Relation to Regular Expressions
-
-The three fundamental operations of regular expressions are:
-
-1. **Concatenation**
-2. **Choice (`|`)**
-3. **Kleene star (`*`)**
-
-These are mapped _directly_ onto concrete classes:
-
-| Regex Operator | Class               |
-| -------------- | ------------------- |
-| `AB`           | `Composite`         |
-| `A+B`          | `VerticalComposite` |
-| `A*`           | `Repeat`            |
-
-Thus, the component tree is isomorphic to a **regular expression syntax tree**.
-
----
-
-### 4. Denotational Semantics
-
-Each component implements a denotation function:
-
-```
-⟦ Component ⟧ → String
-```
-
-Composition is homomorphic:
-
-```
-⟦ Composite(A, B) ⟧ = ⟦A⟧ · ⟦B⟧
-⟦ VerticalComposite(A, B) ⟧ = "<< " ⟦A⟧ ⟦B⟧ " >>"
-⟦ Repeat(A) ⟧ = ⟦A⟧ repeated n times
-```
-
-This ensures that **structural composition is preserved during rendering**, a key property of denotational semantics.
-
----
-
-### 5. Markdown as a Domain-Specific Language
-
-Obsidian Markdown is treated as a **surface syntax** for the formal language.
-
-| Markdown Construct | Semantic Meaning              |
-| ------------------ | ----------------------------- |
-| `[[file]]`         | Component inclusion           |
-| `# Heading`        | Vertical composition boundary |
-| `*` suffix         | Kleene star                   |
-| `?`                | Layout control                |
-
-Thus, Markdown becomes a **DSL (Domain-Specific Language)** whose semantics are defined by the component algebra.
-
-### 6. Design Patterns as Grammar Operators
-
-The project demonstrates a strong correspondence between **object-oriented design patterns** and **formal grammar operators**:
-
-| Pattern     | Grammar Role    |
-| ----------- | --------------- |
-| Composite   | Production rule |
-| Decorator   | Unary operator  |
-| Builder     | Parser          |
-| Interpreter | Renderer        |
-
-This supports the broader thesis that **design patterns encode grammatical structure**.
-
----
-
-## Implications
-
-- Music notation can be modeled as a **formal language**
-- Design patterns provide a **syntax tree API**
-- Markdown can function as a **musical programming language**
-- LilyPond is a **target language**, not an authoring language
+By unifying **object-oriented design patterns** and **formal language theory**, this pipeline represents a **general-purpose, composable, and extensible content-generation system**.
 
 ---
 
