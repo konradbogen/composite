@@ -3,14 +3,6 @@
 ## 1. Introduction
 
 This project presents a **compositional content-generation pipeline** inspired by software design patterns and formal language theory. The framework is **domain-agnostic**, capable of rendering structured text, documents, or musical notation from modular components.
-
-Rather than focusing solely on music, the system treats content as **nested, composable units**, where sections can contain sequences, repetitions, or alternative choices. This makes it suitable for diverse applications, such as:
-
-- Music notation (e.g., generating LilyPond scores)
-- Exams or problem sets, where each task can have multiple variants
-- Structured educational content or procedural documents
-- Any scenario where hierarchical content and combinatorial variation are required
-
 By formalizing content in terms of **components and combinators**, the pipeline allows for **systematic generation, reuse, and modification** of complex documents or datasets.
 
 ---
@@ -20,8 +12,6 @@ By formalizing content in terms of **components and combinators**, the pipeline 
 The framework is built on classical **Gang of Four design patterns**, specifically:
 
 - **Composite**: Treats both atomic and compound content uniformly, enabling hierarchical nesting.
-- **VerticalComposite**: Aggregates sequences of components to define sections or logical units.
-- **Repeat**: Repeats a component a fixed or variable number of times, analogous to iteration.
 
 These patterns serve as **modular building blocks**, combining in flexible ways to represent sequences, choices, and nested structures. This approach ensures that content generation is **extensible**, **maintainable**, and **consistent**, following the principles of object-oriented design.
 
